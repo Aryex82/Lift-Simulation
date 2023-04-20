@@ -9,7 +9,7 @@ function loadLiftsPage(event) {
     const floors = form.elements['floorNum'].value;
     const lifts = form.elements['liftNum'].value;
     event.preventDefault();
-    window.location.assign("./lift-simulation.html?floors="+floors+"&lifts="+lifts);
+    window.location.assign("/src/pages/lift-simulation.html?floors="+floors+"&lifts="+lifts);
 }
 
 function constructPage(url){
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function(event){
     }
 });
 
-function findNearestLift(floor){
+function findNearestLift(floor,event){
     let nearestLift = null;
     let nearestLiftDistance = undefined;
     let minAvailableTime = Number.MAX_VALUE;
@@ -78,7 +78,7 @@ function findNearestLift(floor){
 
     if(nearestLift == null) {
         setTimeout(() => {console.log("Waited for lift");
-            getLift(floor)}, minAvailableTime - Date.now());
+            getLift(floor,event)}, minAvailableTime - Date.now());
     }
 
     else nearestLift.availableFrom = Date.now() + (TIME_PER_FLOOR * nearestLiftDistance) + (TIME_DOOR * 2);
@@ -91,24 +91,14 @@ function findNearestLift(floor){
 
 
 function getLift(floor,event){
-    console.log(event);
-
-    console.log(floor);
     const button = event.target;
-    console.log(button)
     button.disabled = true;
-    console.log(button.classList)
-
-    let lift = findNearestLift(floor);
+    let lift = findNearestLift(floor,event);
 
     if(lift != null)
     {
-        moveLift(lift.id,Math.abs(lift.position - floor), (lift.position - floor) < 0);
+        moveLift(lift.id,Math.abs(lift.position - floor), (lift.position - floor) < 0,button);
         lift.position = floor;
-        setTimeout(()=> {button.disabled = false;
-        },2500)
-        // button.disabled = false;
-        // button.classList.remove('button-active');
     }
     
 }
@@ -116,12 +106,12 @@ function getLift(floor,event){
     const floorBeam = document.getElementsByClassName("floor-beam")[0];
     const floor = document.getElementsByClassName("floor")[0];
 
-function moveLift(id,floors,isUp){
+function moveLift(id,floors,isUp,button){
     const objImage = document.getElementById(id);
 
     var travelPerFloor = (floor.clientHeight + floorBeam.clientHeight) * floors;
     objImage.style.transitionDuration = ((floors * TIME_PER_FLOOR ) /1000)+ "s";
-    setTimeout(() => {doorsAnimation(objImage)}, (floors * TIME_PER_FLOOR ));
+    setTimeout(() => {doorsAnimation(objImage,button)}, (floors * TIME_PER_FLOOR ));
     console.log(objImage);
     if(objImage.style.top ==="") objImage.style.top = "0px";
         
@@ -132,13 +122,16 @@ function moveLift(id,floors,isUp){
     }
 }
 
-function doorsAnimation(objImage){
+function doorsAnimation(objImage,button){
         const liftDoor1 = objImage.getElementsByClassName("lift-door")[0];
         const liftDoor2 = objImage.getElementsByClassName("lift-door")[1];
         var width = liftDoor1.clientWidth;
         liftDoor1.style.width = "0px";
         liftDoor2.style.width = "0px";
-        setTimeout(() => { liftDoor1.style.width = width+"px";
-        liftDoor2.style.width = width+"px";  }, TIME_DOOR);
+        setTimeout(() => { 
+            liftDoor1.style.width = width+"px";
+            liftDoor2.style.width = width+"px"; 
+            setTimeout(() => {button.disabled = false; },TIME_DOOR);
+    }, TIME_DOOR);
 
 }
