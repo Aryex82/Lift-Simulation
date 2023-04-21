@@ -6,11 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>My Website</title>
-    <link rel="stylesheet" href="./css/lifts.css">
+    <link rel="stylesheet" href="./css/main.css">
+
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
 </head>
 
-<body class="body-landing-page">z
+<body class="body-landing-page">
     <main >
         <div >
             <div  id = "start" class="center header-text-color"> 
@@ -21,7 +22,7 @@
                 <form class="form-neon" onsubmit="loadLiftsPage(event)">
                     <label class="component-space-sm" for="floorNum">Enter the number of floors in your building</label><br>
                     <input class="component-space-sm input-field" value="2" min= 2 max=30 type="number" id="floorNum" name="floorNum" placeholder="Min : 2" required><br>
-                    <label class="component-space-sm" for="floorNum">Enter the number of buildings</label><br>
+                    <label class="component-space-sm" for="floorNum">Enter the number of lifts</label><br>
                     <input class="component-space-sm input-field" min=1 max=20 value="1" type="number" id="liftNum" name="liftNum" placeholder="Min : 1" required><br>
                     <button class="component-space-sm button-submit" type="submit">Submit</button><br>
                 </form>

@@ -10,8 +10,12 @@
 } */
 
 body{
-    overflow: auto;
+    width: max-content;
+    padding-left: 33%;
+    padding-right: 33%
 }
+
+
 .building {
     display: flex;
     flex-direction: column;
@@ -21,7 +25,7 @@ body{
     border: 3px solid palevioletred;
     padding: 20px;
     margin: 20px auto;
-    margin-left: 20%;
+    /* margin-left: 20%; */
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 .floor-buttons {
