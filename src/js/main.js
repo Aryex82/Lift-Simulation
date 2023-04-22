@@ -4,12 +4,13 @@ const TIME_PER_FLOOR = 2000;
 const TIME_DOOR = 2500;
 
 function loadLiftsPage(event) {
+    
     console.log(location);
     const form = event.target;
     const floors = form.elements['floorNum'].value;
     const lifts = form.elements['liftNum'].value;
     event.preventDefault();
-    window.location.href = "../pages/lift-simulation.html?floors="+floors+"&lifts="+lifts;
+    window.location.href = "../src/pages/lift-simulation.html?floors="+floors+"&lifts="+lifts;
 }
 
 function constructPage(url){

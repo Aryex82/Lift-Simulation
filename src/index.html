@@ -13,12 +13,12 @@
 
 <body class="body-landing-page">
     <main >
-        <div >
+        <div class ="page-container">
             <div  id = "start" class="center header-text-color"> 
                 <h1>Welcome to Lift Simulator!</h1>
                 <h6 style="color: grey;">If you own a mouse, you will never turn off your computer again.</h6>
             </div>
-            <div class="center component-space">
+            <div class="center component-space form-container">
                 <form class="form-neon" onsubmit="loadLiftsPage(event)">
                     <label class="component-space-sm" for="floorNum">Enter the number of floors in your building</label><br>
                     <input class="component-space-sm input-field" value="2" min= 2 max=30 type="number" id="floorNum" name="floorNum" placeholder="Min : 2" required><br>
@@ -31,14 +31,6 @@
        
     </main>
     <script src="./js/main.js"></script>
-<footer>
-    <p class="info-repo">
-        The contents of this website are deployed from this
-        <a href="https://github.com/Aryex82/Lift-Simulation" target="_blank" rel="noopener noreferrer">
-            open sourced repo
-        </a>
-    </p>
-</footer>
 </body>
 
 

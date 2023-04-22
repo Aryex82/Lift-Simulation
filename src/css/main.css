@@ -1,19 +1,25 @@
-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 15px 20px;
-}
-.info-repo {
-    color: var(--color-text-secondary);
-    margin: 0 auto;
-    text-align: center;
+/* * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+} */
+
+
+.page-container{
+        position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+} 
+
+.form-container{
+    position: relative;
+        display: flex;
+        flex-direction: column;
 }
 .center {
     margin: auto;
-    width: 50%;
-    height: 100%;
     text-align: center;
     border: 3px;
     padding: 10px;
@@ -23,7 +29,6 @@ footer {
 }
 .component-space{
     margin: auto;
-    width: 50%;
     height: 100%;
 }
 .component-space-sm {
@@ -47,6 +52,8 @@ footer {
 }
 
 .form-neon {
+    width: 300px;
+    height: 350px;
     display: inline-block;
     position: relative;
     padding: 1em;
