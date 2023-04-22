@@ -9,7 +9,7 @@ function loadLiftsPage(event) {
     const floors = form.elements['floorNum'].value;
     const lifts = form.elements['liftNum'].value;
     event.preventDefault();
-    window.location.href = "../src/pages/lift-simulation.html?floors="+floors+"&lifts="+lifts;
+    window.location.href = "../pages/lift-simulation.html?floors="+floors+"&lifts="+lifts;
 }
 
 function constructPage(url){
