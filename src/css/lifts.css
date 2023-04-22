@@ -11,11 +11,12 @@
 
 body{
     width: max-content;
-    padding-left: 33%;
-    padding-right: 33%
+
 }
-
-
+.building-container{
+    width: 100vw;
+    min-width: max-content;
+}
 .building {
     display: flex;
     flex-direction: column;
@@ -24,7 +25,7 @@ body{
     background-color: #D3D3D3;
     border: 3px solid palevioletred;
     padding: 20px;
-    margin: 20px auto;
+    /* margin: 20px auto; */
     /* margin-left: 20%; */
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
@@ -35,38 +36,28 @@ body{
 }
 
 .floor {
-    width: 150px;
+    width: 160px;
     margin-left: 10px;
     margin-right: 10px;
-    height: 200px;
+    height: 240px;
     background-color: #d9d9d9;
 }
+/* Media Queries */
+
 
 .up-button,
 .down-button {
     width: 80px;
-    padding: 10px 20px;
+    height: 30px;
     background-color: rgb(184, 211, 231);
-        /* Green background */
         border: none;
-        /* Remove default border */
         color: black;
-        /* Text color */
-        /* Button size */
-        /* Center text */
-        /* Remove underline */
         display: inline-block;
-
-        /* Display as inline-block */
-        /* Text size */
         border-radius: 50px;
-        /* Make button round */
         box-shadow: 0px 5px 10px rgba(12, 18, 209, 0.3);
-        /* Add box shadow */
         transition: all 0.2s ease-in-out;
-        /* Add transition effect */
         margin-bottom: 10px;
-    
+        text-align: center;
 }
 
 .up-button:hover,
@@ -114,16 +105,16 @@ body{
     top: 0px;
     display: flex;
     justify-content: space-between;
-    height: 180px;
-    padding: 10px;
+    height: 100%;
+    width: 100%;
     background-color: rgb(33, 77, 104);
 }
 
-.lift-door{
+.lift-door {
     z-index: 0;
     transition: 2.5s ease;
-    height: 100%;
-    width: 45%;
+    width: 50%;
+    margin: 10px 10px 10px 10px;
     background-color: rgb(168, 126, 140);
 }
 
@@ -138,11 +129,48 @@ body{
 .glow {
     
     text-align: center;
-    font-family: "Georgia", serif;    font-size: 4rem;
+    font-family: "Georgia", serif;    
+    font-size: 4rem;
     color: #ffffff;
     text-shadow: 0 0 20px #ffffff, 0 0 30px #00bfff, 0 0 40px #00bfff, 0 0 50px #00bfff, 0 0 60px #00bfff, 0 0 70px #00bfff, 0 0 80px #00bfff;
     animation: glow 1s ease-in-out 3;
     animation-fill-mode: forwards;
+}
+
+@media screen and (max-width: 800px) {
+    .floor {
+        width: 120px;
+        height: 200px;
+    }
+        .up-button,
+        .down-button {
+                width: 60px;
+                font-size: 10px;
+        }
+        .glow{
+                font-size: 3rem;
+        }
+}
+
+@media screen and (max-width: 400px) {
+    .floor {
+        width: 80px;
+        height: 140px;
+    }
+                        .glow {
+                            font-size: 2rem;
+                        }
+
+    .floor-beam {
+        height: 30px;
+    }
+                 .up-button,
+                 .down-button {
+                     width: 40px;
+                     height: 20px;
+                            text-align: center;
+                                    font-size: 8px;
+                 }
 }
 
 @keyframes glow {

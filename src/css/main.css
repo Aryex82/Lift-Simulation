@@ -1,35 +1,38 @@
-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 15px 20px;
+.page-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
-.info-repo {
-    color: var(--color-text-secondary);
-    margin: 0 auto;
-    text-align: center;
+
+.form-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
 }
+
 .center {
     margin: auto;
-    width: 50%;
-    height: 100%;
     text-align: center;
     border: 3px;
     padding: 10px;
 }
+
 .body-landing-page {
     background-color: #D3D3D3;
 }
-.component-space{
+
+.component-space {
     margin: auto;
-    width: 50%;
     height: 100%;
 }
+
 .component-space-sm {
-        padding: 10px;
-        margin: 10px 10px 10px 10px;
+    padding: 10px;
+    margin: 10px 10px 10px 10px;
 }
+
 .header-text-color {
     color: palevioletred;
 }
@@ -47,6 +50,8 @@ footer {
 }
 
 .form-neon {
+    width: 300px;
+    height: 350px;
     display: inline-block;
     position: relative;
     padding: 1em;
@@ -83,7 +88,7 @@ footer {
     text-align: center;
     border-radius: 10px;
     border: none;
-    
+
     background-color: #222;
     color: #fff;
 }
@@ -91,4 +96,3 @@ footer {
 .form-neon label {
     color: #fff;
 }
-

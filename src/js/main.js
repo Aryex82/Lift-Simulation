@@ -9,7 +9,7 @@ function loadLiftsPage(event) {
     const floors = form.elements['floorNum'].value;
     const lifts = form.elements['liftNum'].value;
     event.preventDefault();
-    window.location.href = "../pages/lift-simulation.html?floors="+floors+"&lifts="+lifts;
+    window.location.href = "../src/pages/lift-simulation.html?floors="+floors+"&lifts="+lifts;
 }
 
 function constructPage(url){
@@ -55,9 +55,26 @@ liftPositions.push({position : 0, availableFrom : Date.now(), id : "lift-0" });
 
 document.addEventListener("DOMContentLoaded", function(event){
     console.log(event);
+
   if(event.target.baseURI.includes("lift-simulation.html")){
         constructPage(event.target.baseURI);
         console.log(liftPositions);
+    }
+    else {
+                const screenWidth = screen.availWidth;
+        let liftInput = document.getElementById('liftNum');
+        if(screenWidth < 400){
+            liftInput.setAttribute("max","2");
+        }
+        else if(screenWidth < 600){
+                        liftInput.setAttribute("max","3");
+
+         }else if(screenWidth < 800){
+                        liftInput.setAttribute("max","4");
+        }
+        else{
+            liftInput.setAttribute("max",screenWidth/190);
+        }
     }
 });
 
