@@ -8,6 +8,17 @@
     background-color:grey;
     padding: 20px 20px 20px 20px;
 } */
+.back-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 5px 10px;
+    border: none;
+    text-decoration: none;
+    color: palevioletred;
+    font-size: 20px;
+}
+.back-button::before {content: "\2190";}
 
 body{
     width: max-content;
@@ -18,6 +29,7 @@ body{
     min-width: max-content;
 }
 .building {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;

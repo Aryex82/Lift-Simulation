@@ -77,12 +77,20 @@ document.addEventListener("DOMContentLoaded", function(event){
         }
     }
 });
-
+function waitForLiftAndMove(floor,event,lift){
+    setTimeout(() => {const button = event.target;
+    moveLift(lift.id,Math.abs(lift.position - floor), (lift.position - floor) < 0,button);
+    },Math.max(0,lift.availableFrom - Date.now()));
+}
 function findNearestLift(floor,event){
     let nearestLift = null;
     let nearestLiftDistance = undefined;
     let minAvailableTime = Number.MAX_VALUE;
     for(let i = 0; i < liftPositions.length; i++){
+        if(liftPositions[i].position == floor){
+            waitForLiftAndMove(floor,event,liftPositions[i]);
+            return null;
+        }
         let distance = Math.abs(liftPositions[i].position - floor);
         if(liftPositions[i].availableFrom < Date.now()){
             if(nearestLiftDistance == undefined || distance < nearestLiftDistance){
