@@ -1,21 +1,325 @@
 
+
 const liftPositions = [];
 const TIME_PER_FLOOR = 2000;
 const TIME_DOOR = 2500;
+const BASE_URL = "https://lift-simulation-be-production.up.railway.app";
+const singlePlayerFlow = [0,1];
+const multiPlayerNewRoom = [0,2,3,1];
+const multiPlayerJoinRoom = [0,2,3,4];
+let invalidInputs = [];
+let tabFlow = [];
+let currentTabIndex = 0;
+let details = {floors : null, lifts : null, playersName : null, playerId : null, roomId : null, type : null , isMulti : null};
 
-function loadLiftsPage(event) {
-    console.log(location);
-    const form = event.target;
-    const floors = form.elements['floorNum'].value;
-    const lifts = form.elements['liftNum'].value;
+document.addEventListener("DOMContentLoaded", async function(event){
+
+  if(event.target.baseURI.includes("lift-simulation.html")){
+
+        details = JSON.parse(sessionStorage.getItem('gameDetails'));
+            console.log(details);
+
+
+            if(details.isMulti){
+            
+            await subscribeToUpdates();
+
+            console.log(details);
+                if(details.type === 'join'){
+                    sendMessage(null,"NEW_JOIN");
+                
+                }
+            }
+        
+        
+        constructPage(details.floors,details.lifts);
+        
+        console.log(liftPositions);
+        
+        if(details.isMulti)
+        {
+            alert("Your Room Id: "+details.roomId);
+        }
+
+    }
+    else {
+
+
+        tabFlow = singlePlayerFlow;
+        showTab(tabFlow[currentTabIndex]);
+        const screenWidth = screen.availWidth;
+        let liftInput = document.getElementById('liftNum');
+        if(screenWidth < 400){
+            liftInput.setAttribute("max","2");
+        }
+        else if(screenWidth < 600){
+            liftInput.setAttribute("max","3");
+
+         }else if(screenWidth < 800){
+                        liftInput.setAttribute("max","4");
+        }
+        else{
+            liftInput.setAttribute("max",screenWidth/190);
+        }
+    }
+});
+
+async function finalSubmit(event)
+{
+
     event.preventDefault();
-    window.location.href = "../pages/lift-simulation.html?floors="+floors+"&lifts="+lifts;
+
+
+    if(event.srcElement.id === "joinRoom"){
+        details.roomId = event.target.elements['roomId'].value;
+        data = await joinRoomRequest();
+        details.floors = data.numberOfFloors;
+        details.lifts = data.numberOfLifts;
+        details.playerId = data.playerId;
+        loadLiftsPage(details.floors,details.lifts);    
+    } 
+    else {
+        const form = event.target;
+        details.floors = form.elements['floorNum'].value;
+        details.lifts = form.elements['liftNum'].value;
+    
+    if(details.type != "single") {
+        data = await createRoomRequest();
+        details.roomId = data.roomId;
+        details.playerId = data.playerId;
+        loadLiftsPage(details.floors,details.lifts);                
+    }else{
+        loadLiftsPage(details.floors,details.lifts);
+    }
+        console.log(details);
+        return false;
+    }
 }
 
-function constructPage(url){
-    var urlParams = new URLSearchParams(url.substring(url.indexOf("?")));
-    var floors = urlParams.get("floors");
-    var lifts = urlParams.get("lifts");
+
+
+//   const connect = async () => {
+
+//     SockJS = new SockJS(BASE_URL+"/ws");
+//     stompClient = Stomp.over(SockJS);
+//     this.stompClient = stompClient;
+//     await stompClient.connect({}, () =>{
+//     console.log("connected");
+
+//      stompClient.subscribe(
+//       "/game/" + details.roomId+ "/queue/messages",
+//       onMessageReceived
+//     );
+//     });
+
+//   };
+const connect = () => {
+  return new Promise((resolve) => {
+    SockJS = new SockJS(BASE_URL + "/ws");
+    stompClient = Stomp.over(SockJS);
+    this.stompClient = stompClient;
+
+    stompClient.connect({}, () => {
+      console.log("connected");
+
+      stompClient.subscribe(
+        "/game/" + details.roomId + "/queue/messages",
+        onMessageReceived
+      );
+
+      resolve();
+    });
+  });
+};
+
+  const onMessageReceived = (message) => {
+        console.log(message);
+        const data = JSON.parse(message.body);
+        console.log(data);
+        switch(data.command.event){
+            case "MOVE_LIFT" :
+                multiplayerMoveLift(data);
+                break;
+            case "NEW_JOIN" : 
+                multiplayerJoin(data);
+                break;
+        }
+}
+
+function multiplayerJoin(data){
+    if(data.playerDetails.playerId != details.playerId){
+        liftReset();
+        alert(data.playerDetails.playerName + " joined the room!");
+    }
+}
+
+function multiplayerMoveLift(data){
+    if(data.playerDetails.playerId != details.playerId){
+        document.getElementById(data.command.buttonId).click();
+    }
+}
+
+
+  const sendMessage = (button,event) => {
+    
+      const message = {
+        roomId :  details.roomId,
+        playerId : details.playerId,
+        command : {
+            buttonId : button?.id,
+            event : event
+        }
+      };
+        
+      this.stompClient.send("/app/command", {}, JSON.stringify(message));
+  };
+
+ async function subscribeToUpdates(){
+
+    console.log("subscribing");
+    await connect();
+    console.log("subscribed");
+
+}
+
+
+async function joinRoomRequest(){
+    const payload = {
+    roomId:details.roomId,
+    playersDetails : {
+        playerName:details.playersName
+    }
+};
+
+try {
+    const response = await fetch(BASE_URL+"/join", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json", // set the Content-Type header to application/json
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if(response.status != 200){
+        alert("oOps! Somethings not right. Did you enter the correct room id?");
+        location.reload();
+        throw new Error("An error occurred");
+    }
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+async function createRoomRequest(){
+    const payload = {
+  numberOfFloors: details.floors,
+  numberOfLifts: details.lifts,
+  adminName: details.playersName,
+};
+
+try {
+    const response = await fetch(BASE_URL+"/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // set the Content-Type header to application/json
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if(response.status != 200){
+        alert("oOps! Somethings not right.");
+        location.reload();
+        throw new Error("An error occurred");
+    }
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+function next(type,event){
+    if(event != null){
+        event.preventDefault();
+        console.log(event);
+    }
+    details.type = type;
+    if(type === "single"){
+        details.isMulti = false;
+        tabFlow = singlePlayerFlow;
+    }else if(type === 'multi' || type == 'join'){
+        details.isMulti = true;
+        tabFlow = multiPlayerJoinRoom;
+    }else if(type === 'create'){
+        tabFlow = multiPlayerNewRoom;
+    }else if(type === 'name'){
+        details.type = 'join';
+        details.playersName = event.target.elements['name'].value;
+    }
+
+    hideTab(tabFlow[currentTabIndex]);
+    showTab(tabFlow[++currentTabIndex]);
+}
+
+function prev(){
+    hideTab(tabFlow[currentTabIndex]);
+    showTab(tabFlow[--currentTabIndex]);
+    for(let i = 0; i <  invalidInputs.length; i++){
+        invalidInputs[i].classList.remove("invalid");
+        invalidInputs.splice(i,1);
+    }
+}
+    
+
+function loadLiftsPage(floors,lifts) {
+    sessionStorage.setItem('gameDetails',JSON.stringify(details));
+    window.location.href = "../pages/lift-simulation.html";
+}
+
+
+function showTab(n) {
+  var x = document.getElementsByClassName("tab");
+  x[n].style.display = "block";
+}
+function hideTab(n) {
+  var x = document.getElementsByClassName("tab");
+  x[n].style.display = "none";
+}
+
+
+function singlePlayerForm(event){
+      var x = document.getElementsByClassName("tab");
+      console.log(x);
+  x[0].style.display = "none";
+
+  x[1].style.display = "block";
+
+
+}
+
+
+function toggleElementsHide(className, hide){
+    var d1Elements = document.getElementsByClassName(className);
+    console.log(d1Elements);
+    if(hide){
+        for(let i = 0; i < d1Elements.length; i++){
+            d1Elements[i].setAttribute("hidden",true);
+        }
+    }else{
+    for(let i = 0; i < d1Elements.length; i++){
+        d1Elements[i].removeAttribute("hidden");
+
+    }
+    }
+
+}
+
+function constructPage(floors,lifts){
+
     var topFloorDom = document.querySelector("#top-floor");
 
     var groundFloorDom = document.querySelector("#ground-floor");
@@ -41,42 +345,25 @@ liftPositions.push({position : 0, availableFrom : Date.now(), id : "lift-0" });
 
     // downButton.removeAttribute("onclick");
     downButton.setAttribute("onclick", "getLift("+(floors-1)+",event)");
+    downButton.setAttribute("id", "lift-down-"+(floors-1));
     for(var i = floors - 2; i >0 ; i--){
         var topClone = topFloorDom.cloneNode(true);
         const liftMethod = "getLift("+i+",event)";
+        const upId = "lift-up-"+i;
+        const downId = "lift-down-"+i;
         var upButtonClone =  upButton.cloneNode(true)
         upButtonClone.setAttribute("onclick", liftMethod);
-        topClone.getElementsByClassName("down-button")[0].setAttribute("onclick",liftMethod);
+        upButtonClone.setAttribute("id", upId);
+        let downButton = topClone.getElementsByClassName("down-button")[0];
+        downButton.setAttribute("onclick",liftMethod);
+        downButton.setAttribute("id",downId);
         topClone.getElementsByClassName("floor-buttons")[0].appendChild(upButtonClone);
         buildingContainer.insertBefore(topClone,groundFloorDom);
     }
 
 }
 
-document.addEventListener("DOMContentLoaded", function(event){
-    console.log(event);
 
-  if(event.target.baseURI.includes("lift-simulation.html")){
-        constructPage(event.target.baseURI);
-        console.log(liftPositions);
-    }
-    else {
-                const screenWidth = screen.availWidth;
-        let liftInput = document.getElementById('liftNum');
-        if(screenWidth < 400){
-            liftInput.setAttribute("max","2");
-        }
-        else if(screenWidth < 600){
-                        liftInput.setAttribute("max","3");
-
-         }else if(screenWidth < 800){
-                        liftInput.setAttribute("max","4");
-        }
-        else{
-            liftInput.setAttribute("max",screenWidth/190);
-        }
-    }
-});
 function waitForLiftAndMove(floor,event,lift){
     setTimeout(() => {const button = event.target;
     moveLift(lift.id,Math.abs(lift.position - floor), (lift.position - floor) < 0,button);
@@ -87,10 +374,10 @@ function findNearestLift(floor,event){
     let nearestLiftDistance = undefined;
     let minAvailableTime = Number.MAX_VALUE;
     for(let i = 0; i < liftPositions.length; i++){
-        if(liftPositions[i].position == floor){
-            waitForLiftAndMove(floor,event,liftPositions[i]);
-            return null;
-        }
+        // if(liftPositions[i].position == floor){
+        //     waitForLiftAndMove(floor,event,liftPositions[i]);
+        //     return null;
+        // }
         let distance = Math.abs(liftPositions[i].position - floor);
         if(liftPositions[i].availableFrom < Date.now()){
             if(nearestLiftDistance == undefined || distance < nearestLiftDistance){
@@ -116,7 +403,13 @@ function findNearestLift(floor,event){
 
 
 function getLift(floor,event){
+
     const button = event.target;
+
+    if(details.isMulti){
+        sendMessage(button,"MOVE_LIFT");
+    }
+    console.log(button.onclick);
     button.disabled = true;
     let lift = findNearestLift(floor,event);
 
@@ -131,6 +424,17 @@ function getLift(floor,event){
     const floorBeam = document.getElementsByClassName("floor-beam")[0];
     const floor = document.getElementsByClassName("floor")[0];
 
+
+
+function liftReset(){
+    for(let i = 0; i < liftPositions.length; i++){
+    const objImage = document.getElementById(liftPositions[i].id);
+        objImage.style.transitionDuration = "0s";
+        objImage.style.top = "";
+        liftPositions[i].position = 0;
+        liftPositions[i].availableFrom = Date.now();
+    }
+}
 function moveLift(id,floors,isUp,button){
     const objImage = document.getElementById(id);
 

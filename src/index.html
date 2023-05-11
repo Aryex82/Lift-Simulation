@@ -1,39 +1,79 @@
-<!DOCTYPE html>
-<html lang="en">
+    <!DOCTYPE html>
+    <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>My Website</title>
-    <link rel="stylesheet" href="./css/main.css">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>My Website</title>
+        <link rel="stylesheet" href="./css/main.css">
+<script  type="module"  src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"
+    integrity="sha512-iKDtgDyTHjAitUDdLljGhenhPwrbBfqTKWO1mkhSFH3A7blITC9MhYon6SjnMhp4o0rADGw9yAC6EW4t5a4K3g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
 
-    <link rel="icon" href="./favicon.ico" type="image/x-icon">
-</head>
 
-<body class="body-landing-page">
-    <main >
-        <div >
-            <div  id = "start" class="center header-text-color"> 
-                <h1>Welcome to Lift Simulator!</h1>
-                <h6 style="color: grey;">If you own a mouse, you will never turn off your computer again.</h6>
+
+        <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    </head>
+
+    <body class="body-landing-page">
+        <main >
+            <div >
+                <div  id = "start" class="center header-text-color"> 
+                    <h1>Welcome to Lift Simulator!</h1>
+                    <h6 style="color: grey;">If you own a mouse, you will never turn off your computer again.</h6>
+                </div>
+                <div class="center component-space">
+                    <div class="form-neon" >
+                        <!-- 0 -->
+                        <div class="tab tab-align">
+                            <br>
+                            <button type="button" onclick="next('single')" class="component-space button-decision">Single Player</button>
+                            <button type="button" onclick="next('multi')" class="component-space button-decision">Multi Player</button>
+                        </div>
+                        <!-- 1 -->
+                            <form  class="tab" id="createPage" onsubmit="finalSubmit(event)">
+                                <label class="component-space-sm" for="floorNum">Enter the number of floors in your building</label><br>
+                                <input class="component-space-sm input-field" value="2" min=2 max=30 type="number" id="floorNum" name="floorNum"
+                                        placeholder="Min : 2" required><br>
+                                <label class="component-space-sm " for="floorNum">Enter the number of lifts</label><br>
+                                <input class="component-space-sm input-field" min=1 max=20 value="1" type="number" id="liftNum" name="liftNum"
+                                        placeholder="Min : 1" required><br>
+                                <button type="button" onclick="prev()" class="component-space-sm button-submit">Back</button>
+                                <button class="component-space-sm button-submit" type="submit">Submit</button><br>
+                            </form>
+                            
+                        <!-- 2 -->
+                        <div class="tab">
+                            <br>
+                            <button type="button" onclick="next('create')" class="component-space button-decision">Create Room</button>
+                            <button type="button" onclick="next('join')" class="component-space button-decision">Join Room</button>
+                            <button type="button" onclick="prev()" class="component-space-sm button-submit">Back</button>
+                        </div>
+                        <!-- 3 -->
+                        <form class="tab" onsubmit="next('name',event)" >
+                            <label class="component-space-sm" for="name">Enter your name</label><br>
+                            <input class="component-space-sm input-field"  id="name" name="name" required><br>
+                            <button type="button" onclick="prev()" class="component-space-sm button-submit">Back</button> 
+                            <button class="component-space-sm button-submit" type="submit">Next</button><br>
+                        </form>
+                        <!-- 4 -->
+                        <form class="tab" id = "joinRoom" onsubmit="finalSubmit(event)">
+                            <label class="component-space-sm" for="name">Enter your room id</label><br>
+                            <input class="component-space-sm input-field"  id="roomId" name="roomId" required><br>
+                            <button type="button" onclick="prev()" class="component-space-sm button-submit">Back</button>
+                            <button class="component-space-sm button-submit" type="submit">Join</button><br>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="center component-space">
-                <form class="form-neon" onsubmit="loadLiftsPage(event)">
-                    <label class="component-space-sm" for="floorNum">Enter the number of floors in your building</label><br>
-                    <input class="component-space-sm input-field" value="2" min= 2 max=30 type="number" id="floorNum" name="floorNum" placeholder="Min : 2" required><br>
-                    <label class="component-space-sm" for="floorNum">Enter the number of lifts</label><br>
-                    <input class="component-space-sm input-field" min=1 max=20 value="1" type="number" id="liftNum" name="liftNum" placeholder="Min : 1" required><br>
-                    <button class="component-space-sm button-submit" type="submit">Submit</button><br>
-                </form>
-            </div>
-        </div>
-       
-    </main>
-    <script src="./js/main.js"></script>
+        
+        </main>
+        <script src="./js/main.js"></script>
 
-</body>
+    </body>
 
 
 
-</html>
+    </html>
